@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(LightingKey))]
 public class PhysicalKeyResponse : MonoBehaviour
 {
     [SerializeField]
@@ -25,9 +26,16 @@ public class PhysicalKeyResponse : MonoBehaviour
     //Box-edges in its local space
     const float maxX = 0.5f;
     const float maxZ = 0.5f;
+
+    LightingKey lightingKey;
     protected void Awake()
     {
         pressedPosition = transform.localPosition + pressedDirection;
+    }
+
+    protected void Start()
+    {
+        lightingKey = GetComponent<LightingKey>();
     }
 
     //Some work in progress
@@ -62,6 +70,7 @@ public class PhysicalKeyResponse : MonoBehaviour
 
     public void Press()
     {
+        lightingKey.StimulateCenter();
         Press(transform.up);
     }
 
