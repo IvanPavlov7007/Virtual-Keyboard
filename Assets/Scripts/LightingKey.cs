@@ -10,8 +10,7 @@ public class LightingKey : MonoBehaviour
 
     [SerializeField]
     float maxSinTime, transmissionSpeed;
-    float timeToWait;
-    float t, wait_t;
+    float t;
 
     static List<LightingKey> allLightingKeys;
 
@@ -29,7 +28,7 @@ public class LightingKey : MonoBehaviour
         highColor = Color.red;
     }
 
-    bool stimulated = false,  preparingToStimulate = false;
+    bool stimulated = false;
 
     public void StimulateCenter()
     {
@@ -44,9 +43,7 @@ public class LightingKey : MonoBehaviour
 
     public void StimulateInTime(float time)
     {
-        preparingToStimulate = true;
-        timeToWait = time;
-        wait_t = 0f;
+        StartCoroutine(waitToStimulate(time));
     }
 
     public void Stimulate(float t = 0f)
@@ -58,18 +55,15 @@ public class LightingKey : MonoBehaviour
     [SerializeField]
     float phaseDistR, phaseDistG, phaseDistB;
 
+
+    IEnumerator waitToStimulate(float timeToWait)
+    {
+        yield return new WaitForSeconds(timeToWait);
+        Stimulate();
+    }
+
     void Update()
     {
-        if(preparingToStimulate)
-        {
-            wait_t += Time.deltaTime;
-            if (wait_t >= timeToWait)
-            {
-                Stimulate(wait_t - timeToWait);
-                preparingToStimulate = false;
-            }
-        }
-
         if (stimulated)
         {
             Color res;
