@@ -140,6 +140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3fc69e54b79d8d4da452506afd94f9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementTime: 1
+  aTanVal: 5
 --- !u!1 &6033696303963247470
 GameObject:
   m_ObjectHideFlags: 0

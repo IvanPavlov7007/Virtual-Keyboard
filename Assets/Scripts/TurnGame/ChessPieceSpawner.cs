@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FiguresSpawner : MonoBehaviour
+public class ChessPieceSpawner : MonoBehaviour
 {
     [SerializeField]
     GameObject pawnPrefab;
@@ -14,12 +14,12 @@ public class FiguresSpawner : MonoBehaviour
     {
         foreach(var field in keysForPawns)
         {
-            SpawnPawn(field);
+            SpawnChessPiece(field);
         }
     }
 
-    public void SpawnPawn(KeyBehaviour field)
+    public void SpawnChessPiece(KeyBehaviour field)
     {
-        Instantiate(pawnPrefab).GetComponent<Pawn>().MoveToField(field);
+        Instantiate(pawnPrefab).GetComponent<ChessPiece>().MoveToField(field, true);
     }
 }
