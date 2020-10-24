@@ -21,10 +21,12 @@ public class KeyBehaviour : MonoBehaviour
     {
 #if UNITY_EDITOR
         textDisplayer.text = actualKeyboardKey.ToUpper();
+        gameObject.name = actualKeyboardKey;
 #endif
         if (Input.GetKeyDown(actualKeyboardKey))
         {
             physicalResponse.Press();
+            TurnManager.Instance.FieldPressed(this);
             Debug.Log(actualKeyboardKey);
         }
         else if (Input.GetKeyUp(actualKeyboardKey))
