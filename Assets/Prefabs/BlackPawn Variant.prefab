@@ -7,6 +7,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4381930997803895187, guid: 8215dc779c124f1439387d5e2b92a1cf,
+        type: 3}
+      propertyPath: side
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6033696303775792764, guid: 8215dc779c124f1439387d5e2b92a1cf,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -70,7 +75,7 @@ PrefabInstance:
     - target: {fileID: 6033696303804265996, guid: 8215dc779c124f1439387d5e2b92a1cf,
         type: 3}
       propertyPath: m_Name
-      value: BlackPawn
+      value: BlackPawn Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6033696303963247469, guid: 8215dc779c124f1439387d5e2b92a1cf,
         type: 3}

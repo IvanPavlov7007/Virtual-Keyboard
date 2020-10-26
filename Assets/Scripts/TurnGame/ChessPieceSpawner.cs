@@ -5,21 +5,26 @@ using UnityEngine;
 public class ChessPieceSpawner : MonoBehaviour
 {
     [SerializeField]
-    GameObject pawnPrefab;
+    GameObject whitePawnPrefab, blackPawnPrefab;
     [SerializeField]
-    KeyBehaviour[] keysForPawns;
-
+    ChessFieldKeyBehaviuor[] keysForWhitePawns,keysForBlackPawns;
 
     private void Start()
     {
-        foreach(var field in keysForPawns)
+        foreach(var field in keysForWhitePawns)
         {
-            SpawnChessPiece(field);
+            SpawnChessPiece(field,true);
         }
+
+        foreach (var field in keysForBlackPawns)
+        {
+            SpawnChessPiece(field, false);
+        }
+
     }
 
-    public void SpawnChessPiece(KeyBehaviour field)
+    public void SpawnChessPiece(ChessFieldKeyBehaviuor field, bool spawnWhite)
     {
-        Instantiate(pawnPrefab).GetComponent<ChessPiece>().MoveToField(field, true);
+        Instantiate(spawnWhite?whitePawnPrefab : blackPawnPrefab).GetComponent<ChessPiece>().MoveToField(field, true);
     }
 }

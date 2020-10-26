@@ -11,16 +11,22 @@ public class TurnManager : MonoBehaviour
         get { return instance; }
         private set { }
     }
-    ChessPiece currentPawn = null;
+    ChessPiece currentChessPiece = null;
 
     public List<ChessPiece> allChessPieces;
 
     [Header("Fields setting")]
     public RowOfFields[] GridOfFields;
-    //public ChessFieldKeyBehaviuor[] flattenedFieldsGrid;
+    [HideInInspector]
+    public ChessFieldKeyBehaviuor[] flattenedFieldsGrid;
     //public int[] countOfFieldsInRow;
 
     //List<ChessFieldKeyBehaviuor[]> fieldGrid;
+
+    [Header("Stock settings")]
+    public Transform StockInitialPosition;
+    public Vector3 nextPieceInStockDirection = Vector3.right;
+    int lastStockIndex = 0;
 
     bool nextTurnIsReady = true;
     public bool NextTurnIsReady
@@ -29,28 +35,45 @@ public class TurnManager : MonoBehaviour
         private set { nextTurnIsReady = value; }
     }
 
+    private void Start()
+    {
+        for(int y = 0; y < GridOfFields.Length; y++)
+        {
+            var row = GridOfFields[y];
+            for (int x = 0; x < row.Count; x++)
+            {
+                row[x].Initialise(x, y);
+            }
+        }
+    }
+
     private void Awake()
     {
         if (instance == null)
             instance = this;
         allChessPieces = new List<ChessPiece>();
 
-        //fieldGrid = new List<ChessFieldKeyBehaviuor[]>();
-        //int i = 0;
-        //for(int row = 0; row < countOfFieldsInRow.Length; row++)
-        //{
-        //    int curFieldsCount = countOfFieldsInRow[row];
-        //    fieldGrid.Add(new ChessFieldKeyBehaviuor[curFieldsCount]);
-        //    for (int x = 0; x < curFieldsCount; x++)
-        //    {
-        //        fieldGrid[row][x] = flattenedFieldsGrid[i]; 
-        //        i++;
-        //    }
-        //}
+        int count = 0;
+        foreach(var r in GridOfFields)
+        {
+            count += r.Count;
+        }
+
+        flattenedFieldsGrid = new ChessFieldKeyBehaviuor[count];
+        int i = 0;
+        for (int row = 0; row < GridOfFields.Length; row++)
+        {
+            int curFieldsCount = GridOfFields[row].Count;
+            for (int x = 0; x < curFieldsCount; x++)
+            {
+                flattenedFieldsGrid[i] = GridOfFields[row][x];
+                i++;
+            }
+        }
     }
 
 
-    public void FieldPressed(KeyBehaviour field)
+    public void FieldPressed(ChessFieldKeyBehaviuor field)
     {
         if (!nextTurnIsReady)
             return;
@@ -59,16 +82,44 @@ public class TurnManager : MonoBehaviour
         
     }
 
-    IEnumerator doTurn(KeyBehaviour field)
+    ChessFieldKeyBehaviuor[] lastHighlightedFields = null;
+
+    IEnumerator doTurn(ChessFieldKeyBehaviuor field)
     {
         ChessPiece figureUnderField = allChessPieces.Find(x => x.currentField == field);
-        if (figureUnderField != null)
-            currentPawn = figureUnderField;
-        else if (instance.currentPawn != null)
-            yield return instance.currentPawn.MoveToField(field);
+
+        if (lastHighlightedFields != null)
+        {
+            foreach (var f in lastHighlightedFields)
+            {
+                f.GetComponent<LightingKey>().ResetColor();
+            }
+        }
+
+        
+        if (currentChessPiece != null && currentChessPiece.PossibleField(field))
+        {
+            yield return currentChessPiece.MoveToField(field);
+            currentChessPiece = null;
+        }
+        else if (figureUnderField != null)
+        {
+            currentChessPiece = figureUnderField;
+            lastHighlightedFields = currentChessPiece.PossibleFields();
+            foreach (var f in lastHighlightedFields)
+                f.GetComponent<LightingKey>().SetColor(f.chessPieceHere == null ? Color.green : Color.red);
+
+        }
+        else
+            currentChessPiece = null;
 
         nextTurnIsReady = true;
         yield return null;
+    }
+
+    public Vector3 GetStockPosition()
+    {
+        return StockInitialPosition.position + nextPieceInStockDirection * lastStockIndex++;
     }
 }
 
@@ -79,7 +130,17 @@ public class RowOfFields
 
     public ChessFieldKeyBehaviuor this[int x]
     {
-        get => fields[x];
+        get
+        {
+            if(x < 0 || x >= Count)
+                return null;
+            return fields[x];
+        }
         set => fields[x] = value;
+    }
+
+    public int Count
+    {
+        get => fields.Count;
     }
 }

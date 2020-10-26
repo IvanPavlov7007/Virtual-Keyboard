@@ -2,32 +2,69 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ChessSide { White, Black}
+
 public class ChessPiece : MonoBehaviour
 {
+    public ChessSide side;
 
     public float movementTime = 1f, aTanVal;
 
-    KeyBehaviour curField;
-    public KeyBehaviour currentField
+    ChessFieldKeyBehaviuor curField;
+    public ChessFieldKeyBehaviuor currentField
     {
         get { return curField; }
         private set { }
     }
 
-    public Coroutine MoveToField(KeyBehaviour field, bool moveImediately = false)
+    public virtual Coroutine MoveToField(ChessFieldKeyBehaviuor field, bool moveImediately = false)
     {
-        curField = field;
         Vector3 pos = CommonTools.yPlaneVector(field.transform.position, transform.position.y);
         if (!moveImediately)
-            return StartCoroutine(moveAnimation(pos));
+            return StartCoroutine(processMove(field,pos));
         else
         {
+            curField = field;
+            field.chessPieceHere = this;
             transform.position = pos;
             return null;
         }
     }
 
-    IEnumerator moveAnimation(Vector3 destination)
+    public virtual Coroutine ReturnToStock()
+    {
+        curField.chessPieceHere = null;
+        curField = null;
+        return StartCoroutine(moveAnimation(TurnManager.Instance.GetStockPosition()));
+    }
+
+    public bool PossibleField(ChessFieldKeyBehaviuor field)
+    {
+        return System.Array.Find(PossibleFields(), x => x == field);
+    }
+
+    public virtual ChessFieldKeyBehaviuor[] PossibleFields()
+    {
+        return TurnManager.Instance.flattenedFieldsGrid;
+    }
+
+    protected virtual IEnumerator processMove(ChessFieldKeyBehaviuor field, Vector3 destination)
+    {
+        if(field.chessPieceHere != null)
+        {
+            yield return field.chessPieceHere.ReturnToStock();
+        }
+
+        yield return StartCoroutine(moveAnimation(destination));
+
+        curField.chessPieceHere = null;
+        curField = field;
+        field.chessPieceHere = this;
+
+        yield return null;
+    }
+
+    protected virtual IEnumerator moveAnimation(Vector3 destination)
     {
         Vector3 initPos = transform.position;
         Vector3 velocity = Vector3.zero;
@@ -41,14 +78,8 @@ public class ChessPiece : MonoBehaviour
         yield return null;
     }
 
-    void Start()
+    protected void Start()
     {
         TurnManager.Instance.allChessPieces.Add(this);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
