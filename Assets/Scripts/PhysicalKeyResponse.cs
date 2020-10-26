@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(LightingKey))]
-public class PhysicalKeyResponse : MonoBehaviour
+public class PhysicalKeyResponse : KeyListener
 {
     [SerializeField]
     Vector3 pressedDirection;
@@ -27,15 +26,9 @@ public class PhysicalKeyResponse : MonoBehaviour
     const float maxX = 0.5f;
     const float maxZ = 0.5f;
 
-    LightingKey lightingKey;
     protected void Awake()
     {
         pressedPosition = transform.localPosition + pressedDirection;
-    }
-
-    protected void Start()
-    {
-        lightingKey = GetComponent<LightingKey>();
     }
 
     //Some work in progress
@@ -68,14 +61,15 @@ public class PhysicalKeyResponse : MonoBehaviour
         }
     }
 
-    public void Press()
+    protected override void OnKeyPressed(KeyBehaviour key)
     {
-        lightingKey.StimulateCenter();
+        base.OnKeyPressed(key);
         Press(transform.up);
     }
 
-    public void Release()
+    protected override void OnKeyReleased(KeyBehaviour key)
     {
+        base.OnKeyReleased(key);
         if (pressed)
         {
             pressed = false;

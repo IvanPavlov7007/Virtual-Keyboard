@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class LightingKey : MonoBehaviour
+public class LightingKey : KeyListener
 {
     Color baseColor, highColor;
     TextMeshPro textDisplayer;
@@ -21,11 +21,18 @@ public class LightingKey : MonoBehaviour
         allLightingKeys.Add(this);
     }
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         textDisplayer = GetComponentInChildren<TextMeshPro>();
         baseColor = textDisplayer.color;
         highColor = Color.red;
+    }
+
+    protected override void OnKeyPressed(KeyBehaviour field)
+    {
+        base.OnKeyPressed(field);
+        StimulateCenter();
     }
 
     bool stimulated = false;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class TurnManager : MonoBehaviour
 {
@@ -14,6 +15,13 @@ public class TurnManager : MonoBehaviour
 
     public List<ChessPiece> allChessPieces;
 
+    [Header("Fields setting")]
+    public RowOfFields[] GridOfFields;
+    //public ChessFieldKeyBehaviuor[] flattenedFieldsGrid;
+    //public int[] countOfFieldsInRow;
+
+    //List<ChessFieldKeyBehaviuor[]> fieldGrid;
+
     bool nextTurnIsReady = true;
     public bool NextTurnIsReady
     {
@@ -26,6 +34,19 @@ public class TurnManager : MonoBehaviour
         if (instance == null)
             instance = this;
         allChessPieces = new List<ChessPiece>();
+
+        //fieldGrid = new List<ChessFieldKeyBehaviuor[]>();
+        //int i = 0;
+        //for(int row = 0; row < countOfFieldsInRow.Length; row++)
+        //{
+        //    int curFieldsCount = countOfFieldsInRow[row];
+        //    fieldGrid.Add(new ChessFieldKeyBehaviuor[curFieldsCount]);
+        //    for (int x = 0; x < curFieldsCount; x++)
+        //    {
+        //        fieldGrid[row][x] = flattenedFieldsGrid[i]; 
+        //        i++;
+        //    }
+        //}
     }
 
 
@@ -48,5 +69,17 @@ public class TurnManager : MonoBehaviour
 
         nextTurnIsReady = true;
         yield return null;
+    }
+}
+
+[System.Serializable]
+public class RowOfFields
+{
+    public List<ChessFieldKeyBehaviuor> fields;
+
+    public ChessFieldKeyBehaviuor this[int x]
+    {
+        get => fields[x];
+        set => fields[x] = value;
     }
 }

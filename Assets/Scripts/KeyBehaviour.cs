@@ -10,6 +10,8 @@ public class KeyBehaviour : MonoBehaviour
     PhysicalKeyResponse physicalResponse;
     public string actualKeyboardKey;
 
+    public event KeyBehaviourAction onKeyPressed, onKeyReleased;
+
     void Start()
     {
         textDisplayer = GetComponentInChildren<TextMeshPro>();
@@ -25,11 +27,17 @@ public class KeyBehaviour : MonoBehaviour
 #endif
         if (Input.GetKeyDown(actualKeyboardKey))
         {
-            physicalResponse.Press();
-            TurnManager.Instance.FieldPressed(this);
-            Debug.Log(actualKeyboardKey);
+            if (onKeyPressed != null)
+                onKeyPressed(this);
+            
+            //Debug.Log(actualKeyboardKey);
         }
         else if (Input.GetKeyUp(actualKeyboardKey))
-            physicalResponse.Release();
+        {
+            if (onKeyReleased != null)
+                onKeyReleased(this);
+        }
     }
 }
+
+public delegate void KeyBehaviourAction(KeyBehaviour behaviour);
