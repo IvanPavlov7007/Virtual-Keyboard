@@ -35,6 +35,8 @@ public class TurnManager : MonoBehaviour
         private set { nextTurnIsReady = value; }
     }
 
+    SpriteIndicator currentPieceIndicator;
+
     private void Start()
     {
         for(int y = 0; y < GridOfFields.Length; y++)
@@ -45,6 +47,9 @@ public class TurnManager : MonoBehaviour
                 row[x].Initialise(x, y);
             }
         }
+
+        currentPieceIndicator = FindObjectOfType<SpriteIndicator>();
+        currentPieceIndicator.HideIndicator();
     }
 
     private void Awake()
@@ -96,26 +101,34 @@ public class TurnManager : MonoBehaviour
             }
         }
 
-        
+
         if (currentChessPiece != null && currentChessPiece.PossibleField(field))
         {
             yield return currentChessPiece.MoveToField(field);
-            currentChessPiece = null;
+            deselectPiece();
         }
         else if (figureUnderField != null)
         {
             currentChessPiece = figureUnderField;
+            currentPieceIndicator.ShowIndicator(currentChessPiece.transform);
             lastHighlightedFields = currentChessPiece.PossibleFields();
             foreach (var f in lastHighlightedFields)
                 f.GetComponent<LightingKey>().SetColor(f.chessPieceHere == null ? Color.green : Color.red);
 
         }
         else
-            currentChessPiece = null;
+            deselectPiece();
 
         nextTurnIsReady = true;
         yield return null;
     }
+
+    void deselectPiece()
+    {
+        currentPieceIndicator.HideIndicator();
+        currentChessPiece = null;
+    }
+
 
     public Vector3 GetStockPosition()
     {
