@@ -1,2 +1,2 @@
-# GameConcept3
+# Virtual Keyboard
 A game with a virtual keyboard
